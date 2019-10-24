@@ -14,9 +14,11 @@ import RegisterMedico from "./components/auth/RegisterMedico";
 import Login from "./components/auth/Login";
 import DashboardAmbulancia from "./components/dashboard/DashboardAmbulancia";
 import DashboardMedico from "./components/dashboard/DashboardMedico";
+import Countdown from "./components/dashboard/Countdown";
 
 import { Provider } from "react-redux"; //used to manage state between components
 import store from "./store";
+
 
 // Check for token to keep user logged in
 if (localStorage.jwtToken) {
@@ -46,6 +48,7 @@ function App() {
           <Route exact path="/login" component={Login} />
           <Switch>
             <PrivateRoute exact path="/ambulancia/dashboard" component={DashboardAmbulancia} />
+            <PrivateRoute exact path="/ambulancia/countdown" component={Countdown} />
             <PrivateRoute exact path="/centromedico/dashboard" component={DashboardMedico} />
           </Switch>
         </div>
