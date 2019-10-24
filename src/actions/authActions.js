@@ -4,7 +4,7 @@ import jwt_decode from "jwt-decode";
 import { GET_ERRORS, SET_CURRENT_USER, USER_LOADING } from "./types"; 
 export const registerAmbulancia = (userData, history) => dispatch => {
   axios
-    .post("/api/ambulancias/register", userData)
+    .post("https://ambulapp-main-server.herokuapp.com/api/ambulancias/register", userData)
     .then(res => history.push("/login")) // re-direct to login on successful register
     .catch(err =>
       dispatch({
@@ -15,7 +15,7 @@ export const registerAmbulancia = (userData, history) => dispatch => {
 }; 
 export const registerMedico = (userData, history) => dispatch => {
   axios
-    .post("/api/centrosmedicos/register", userData)
+    .post("https://ambulapp-main-server.herokuapp.com/api/centrosmedicos/register", userData)
     .then(res => history.push("/login")) // re-direct to login on successful register
     .catch(err =>
       dispatch({
@@ -27,7 +27,7 @@ export const registerMedico = (userData, history) => dispatch => {
 // Login - get user token
 export const loginUser = userData => dispatch => {
   axios
-    .post("/api/users/login", userData)
+    .post("https://ambulapp-main-server.herokuapp.com/api/users/login", userData)
     .then(res => {
       // Save to localStorage// Set token to localStorage
       const { token, isambulance } = res.data;
