@@ -23,11 +23,17 @@ class RegisterMedico extends Component {
   }
 
   // componentDidMount() {
+  //   // If logged in and user navigates to Login page, should redirect them to dashboard
   //   if (this.props.auth.isAuthenticated) {
-  //     this.props.history.push("/medico/dashboard");
+
+  //     if (this.props.auth.isambulance) {    
+  //       this.props.history.push("ambulancia/dashboard");
+  //     }else{
+  //       this.props.history.push("centromedico/dashboard");
+  //     }
   //   }
   // }
-
+  
   // ----- REDUX - REACT -----
   componentWillReceiveProps(nextProps) {
     if (nextProps.errors) {

@@ -5,6 +5,7 @@ import M from "materialize-css";
 import NavBar from "./Navbar"
 
 class DashboardAmbulancia extends Component {
+
   constructor() {
     super();
     this.state = {
@@ -26,7 +27,16 @@ class DashboardAmbulancia extends Component {
       discapacitado: "",
     };
   }
-
+  
+  static navigationOptions = {
+    headerTitle:'Disable back Options',
+    headerTitleStyle: {color:'white'},
+    headerStyle: {backgroundColor:'black'},
+    headerTintColor: 'red',
+    headerForceInset: {vertical: 'never'},
+    headerLeft: " "
+ }
+ 
   componentDidMount() {
     //form select para tipo de sangre
     const elems = document.querySelectorAll('select');

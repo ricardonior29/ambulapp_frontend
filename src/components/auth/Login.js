@@ -17,12 +17,15 @@ class Login extends Component {
     };
   }
 
-  /*componentDidMount() {
-    // If logged in and user navigates to Login page, should redirect them to dashboard
-    if (this.props.auth.isAuthenticated) {
-      this.props.history.push("ambulancia/dashboard");
-    }
-  }*/
+  // componentDidMount() {
+  //   // If logged in and user navigates to Login page, should redirect them to dashboard
+  //   if (this.props.auth.isAuthenticated) {
+  //     if (this.props.auth.isambulance) {
+  //       console.loog("DID MOUNT ES AMBULANCIA");
+  //       this.props.history.push("ambulancia/dashboard");
+  //     } else this.props.history.push("centromedico/dashboard"); 
+  //   }
+  // }
 
   // ----- REDUX - REACT -----
   componentWillReceiveProps(nextProps) {
