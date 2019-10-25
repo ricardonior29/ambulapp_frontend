@@ -1,61 +1,68 @@
+import replication from "../utils/replication";
 import axios from "axios";
 import setAuthToken from "../utils/setAuthToken";
 import jwt_decode from "jwt-decode";
-import { GET_ERRORS, SET_CURRENT_USER, USER_LOADING } from "./types"; 
-export const registerAmbulancia = (userData, history) => dispatch => {
-  axios
-    .post("https://ambulapp-main-server.herokuapp.com/api/ambulancias/register", userData)
-    .then(res => history.push("/login")) // re-direct to login on successful register
-    .catch(err =>
-      dispatch({
-        type: GET_ERRORS,
-        payload: err.response.data,
-      })
-    );
-}; 
-export const registerMedico = (userData, history) => dispatch => {
-  axios
-    .post("https://ambulapp-main-server.herokuapp.com/api/centrosmedicos/register", userData)
-    .then(res => history.push("/login")) // re-direct to login on successful register
-    .catch(err =>
-      dispatch({
-        type: GET_ERRORS,
-        payload: err.response.data,
-      })
-    );
-};
-// Login - get user token
-export const loginUser = userData => dispatch => {
-  axios
-    .post("https://ambulapp-main-server.herokuapp.com/api/users/login", userData)
-    .then(res => {
-      // Save to localStorage// Set token to localStorage
-      const { token, isambulance } = res.data;
-      localStorage.setItem("jwtToken", token);
-      // Set token to Auth header
-      setAuthToken(token);
-      // Decode token to get user data
-      const decoded = jwt_decode(token);
-      //var isAmbulancia = decoded
-      
-      // Set current user
-      dispatch(setCurrentUser(decoded, isambulance) );
-    })
+import { GET_ERRORS, SET_CURRENT_USER, USER_LOADING } from "./types";
 
-    .catch(err =>
-      { console.info(err.config); 
+export const registerAmbulancia = (userData, history) => dispatch => {
+  replication.test().then(base => {
+    axios
+      .post(base + "/ambulancias/register", userData)
+      .then(res => history.push("/login")) // re-direct to login on successful register
+      .catch(err =>
         dispatch({
           type: GET_ERRORS,
           payload: err.response.data,
-      })}
-      
-    );
+        })
+      );
+  });
+};
+
+export const registerMedico = (userData, history) => dispatch => {
+  replication.test().then(base => {
+    axios
+      .post(base + "/centrosmedicos/register", userData)
+      .then(res => history.push("/login")) // re-direct to login on successful register
+      .catch(err =>
+        dispatch({
+          type: GET_ERRORS,
+          payload: err.response.data,
+        })
+      );
+  });
+};
+// Login - get user token
+export const loginUser = userData => dispatch => {
+  replication.test().then(base => {
+    axios
+      .post(base + "/users/login", userData)
+      .then(res => {
+        // Save to localStorage// Set token to localStorage
+        const { token, isambulance } = res.data;
+        localStorage.setItem("jwtToken", token);
+        // Set token to Auth header
+        setAuthToken(token);
+        // Decode token to get user data
+        const decoded = jwt_decode(token);
+        //var isAmbulancia = decoded
+
+        // Set current user
+        dispatch(setCurrentUser(decoded, isambulance));
+      })
+      .catch(err => {
+        console.info(err.config);
+        dispatch({
+          type: GET_ERRORS,
+          payload: err.response.data,
+        });
+      });
+  });
 }; // Set logged in user
 export const setCurrentUser = (decoded, a) => {
   return {
     type: SET_CURRENT_USER,
     payload: decoded,
-    isambulance: a
+    isambulance: a,
   };
 }; // User loading
 export const setUserLoading = () => {
