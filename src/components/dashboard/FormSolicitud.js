@@ -1,27 +1,32 @@
 import React, { Component } from "react";
 import M from "materialize-css";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import { enviarSolicitud } from "../../actions/authActions";
 
 class DashboardAmbulancia extends Component {
 
   constructor() {
     super();
     this.state = {
-      nombre: "",
-      apellido: "",
-      documento: "",
       nivel_triaje: "",
-      tipo_sangre: "",
-      edad: "",
-      valoración: "",
-
       latitud: "",
       longitud: "",
-      ambulancia: "",
-
-      embarazada: "",
+      valoracion: "",
+      paciente: {
+        nombre: "",
+        apellido: "",
+        documento: "",
+        edad: "",
+        grupo_sanguineo: "",
+        rh: "",
+        condiciones: []
+      },      
+      ambulancia: ""//,
+      /*embarazada: "",
       desplazado: "",
       victima_violencia: "",
-      discapacitado: "",
+      discapacitado: "",*/
     };
   }
   
@@ -41,11 +46,15 @@ class DashboardAmbulancia extends Component {
 
     //button group para los niveles de triaje
     var nivelesTriaje = document.querySelectorAll('#botonesTriaje div label');
-    for(var i = 0; i < nivelesTriaje.length; i++){
-      nivelesTriaje[i].addEventListener('click', function(){ 
-        this.classList.add('active');
-        const clicked = this;
-        const siblings = Array.prototype.filter.call(this.parentNode.parentNode.children, function(child){
+    for(var i = 0; i < 4; i++){
+      let actual = nivelesTriaje[i]
+      nivelesTriaje[i].addEventListener('click', () => {
+        actual.classList.add('active');
+        //set state
+        //valorTriaje = this.firstChild.value
+        this.setState({ nivel_triaje: actual.firstChild.value})
+        const clicked = actual;
+        const siblings = Array.prototype.filter.call(actual.parentNode.parentNode.children, function(child){
           return child.firstChild !== clicked;
         });
         for(var i = 0; i < siblings.length; i++){
@@ -56,7 +65,7 @@ class DashboardAmbulancia extends Component {
   }
 
   // ----- REDUX - REACT -----
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     console.log(nextProps);
     if (nextProps.errors) {
       this.setState({
@@ -67,32 +76,76 @@ class DashboardAmbulancia extends Component {
   // -------------------------
 
   onChange = e => {
-    this.setState({ [e.target.id]: e.target.value });
+    this.setState({ [e.target.id]: e.target.value,
+      paciente: { ...this.state.paciente, [e.target.id]: e.target.value} }
+      );
   };
+
+  onChangeCondiciones = e => {
+    const cond = document.querySelectorAll('input[type="checkbox"]:checked');
+    var allCond = []
+    for(var i = 0; i < cond.length; i++)
+    {
+      allCond.push(cond[i].value)
+    }
+    console.log(allCond)
+    this.setState({paciente: { ...this.state.paciente, condiciones: allCond}});
+  };
+
+  onChangeTipoSangre = e => {
+    if(e.target.nodeName === "SELECT")
+    {
+      //get selected option
+      const elems = document.querySelectorAll('select');
+      var instance = M.FormSelect.getInstance(elems[0]);
+      var grupo = instance.input.value;
+      this.setState({paciente: { ...this.state.paciente, grupo_sanguineo: grupo}});
+    }
+    else
+    {
+      //test radio button
+      const selectedRH = document.querySelectorAll('input[name="rh"]:checked')[0].value;
+      this.setState({paciente: { ...this.state.paciente, rh: selectedRH}});
+    }
+  };
+
   onSubmit = e => {
     e.preventDefault();
 
-    const newPeticion = {
-      nombre: this.state.nombre,
-      apellido: this.state.apellido,
-      documento: this.state.documento,
-      nivel_triaje: this.state.nivel_triaje,
-      tipo_sangre: this.state.tipo_sangre,
-      edad: this.state.edad,
-      valoración: this.state.valoración,
+    const newPaciente = {
+      nombre: this.state.paciente.nombre,
+      apellido: this.state.paciente.apellido,
+      documento: this.state.paciente.documento,
+      tipo_sangre: this.state.paciente.grupo_sanguineo + this.state.paciente.rh,
+      edad: this.state.paciente.edad,
+      condiciones: this.state.paciente.condiciones
+    }
 
+    const newPeticion = {
+      nivel_triaje: this.state.nivel_triaje,
+      valoracion: this.state.valoracion,
+      paciente: newPaciente,
       latitud: this.state.latitud,
       longitud: this.state.longitud,
-      ambulancia: this.state.ambulancia,
-
+      ambulancia: this.state.ambulancia/*,
       embarazada: this.state.embarazada,
       desplazado: this.state.desplazado,
       victima_violencia: this.state.victima_violencia,
-      discapacitado: this.state.discapacitado,
+      discapacitado: this.state.discapacitado,*/
     };
     // ----- REDUX - REACT -----
     //this.props.enviarSolicitud(newPeticion, this.props.history);
+    console.log('solicitud ', JSON.stringify(newPeticion));
     // -------------------------
+    // do something with form values, and then
+   /* axios.post('/api/solicitudes/nueva', newPeticion).then(response => {
+        console.log('Solicitud guardada');
+        // do something with response, and on response
+    }).catch(error => {
+        console.log('Problema guardando la solicitud');
+        // do something when request was unsuccessful
+    });*/
+
   };
 
   render() {
@@ -100,9 +153,9 @@ class DashboardAmbulancia extends Component {
     if ("geolocation" in navigator) {
       console.log("Geolocalización disponible");
       navigator.geolocation.getCurrentPosition(position => {
-        console.log(position.coords.accuracy);
+        /*console.log(position.coords.accuracy);
         console.log("Mi posición: "+position.coords.latitude+", "+position.coords.longitude);
-        console.log("Posición del hospital: 7.063977,-73.086824"); 
+        console.log("Posición del hospital: 7.063977,-73.086824"); */
         console.log("Distancia en km: "+getDistance(position.coords.latitude,position.coords.longitude,7.063977,-73.086824));
         //this.state.latitud = position.coords.latitude;
         //this.state.longitud = position.coords.latitude;
@@ -120,13 +173,13 @@ class DashboardAmbulancia extends Component {
               Formulario de Solicitud
             </h4>
             <div className="row">
-              <form noValidate onSubmit={this.onSubmit} className="col s12">
+              <form method="post" onSubmit={this.onSubmit} className="col s12">
                 <div className="row">
                   <div className="input-field col s3 offset-m3">
                     <i className="material-icons prefix">account_circle</i>
                     <input
                       onChange={this.onChange}
-                      value={this.state.nombre}
+                      value={this.state.paciente.nombre}
                       id="nombre"
                       type="text"
                       className="validate"
@@ -137,7 +190,7 @@ class DashboardAmbulancia extends Component {
                     <i className="material-icons prefix">account_circle</i>
                     <input
                       onChange={this.onChange}
-                      value={this.state.apellido}
+                      value={this.state.paciente.apellido}
                       id="apellido"
                       type="text"
                       className="validate"
@@ -148,7 +201,7 @@ class DashboardAmbulancia extends Component {
                     <i className="material-icons prefix">credit_card</i>
                     <input
                       onChange={this.onChange}
-                      value={this.state.documento}
+                      value={this.state.paciente.documento}
                       id="documento"
                       type="text"
                       className="validate"
@@ -159,7 +212,7 @@ class DashboardAmbulancia extends Component {
                     <i className="material-icons prefix">account_circle</i>
                     <input
                       onChange={this.onChange}
-                      value={this.state.edad}
+                      value={this.state.paciente.edad}
                       id="edad"
                       type="text"
                       className="validate"
@@ -168,22 +221,22 @@ class DashboardAmbulancia extends Component {
                   </div>
                 </div>
                 <div className="row">
-                  <div className="container col s8 offset-m2 offset-2">
+                  <div className="container col s8 offset-m2 offset-2" onChange={this.onChangeCondiciones}>
                     <p>
                       <label className="left">
-                        <input type="checkbox" className="filled-in" />
+                        <input type="checkbox" className="filled-in" value="embarazada"/>
                         <span>Embarazada</span>
                       </label>
                       <label className="col s3 offset-m1">
-                        <input type="checkbox" className="filled-in" />
+                        <input type="checkbox" className="filled-in" value="desplazado"/>
                         <span>Desplazado(a)</span>
                       </label>
                       <label>
-                        <input type="checkbox" className="filled-in" />
+                        <input type="checkbox" className="filled-in" value="victima_violencia"/>
                         <span>Víctima violencia</span>
                       </label>
                       <label className="right">
-                        <input type="checkbox" className="filled-in" />
+                        <input type="checkbox" className="filled-in" value="discapacitado"/>
                         <span>Discapacitado(a)</span>
                       </label>
                     </p>
@@ -196,22 +249,22 @@ class DashboardAmbulancia extends Component {
                     </h6>
                   </div>
                   <div className="input-field col s2 offset-m4">
-                    <select>
-                      <option value="" disabled selected>Grupo sanguíneo</option>
+                    <select defaultValue={'DEFAULT'} onChange={this.onChangeTipoSangre}>
+                      <option value="DEFAULT" disabled>Grupo sanguíneo</option>
                       <option value="O">O</option>
                       <option value="A">A</option>
                       <option value="B">B</option>
-                      <option value="B">AB</option>
+                      <option value="AB">AB</option>
                     </select>
                   </div>
-                  <div className="input-field col s3">
+                  <div className="input-field col s3 radioRequired">
                     <p>
                       <label className="left">
-                        <input class="with-gap" name="group3" type="radio" checked />
+                        <input className="with-gap" name="rh" type="radio" value="+" onChange={this.onChangeTipoSangre}/>
                         <span>Positivo (+)</span>
                       </label>
                       <label>
-                        <input class="with-gap" name="group3" type="radio" checked />
+                        <input className="with-gap" name="rh" type="radio" value="-" onChange={this.onChangeTipoSangre}/>
                         <span>Negativo (-)</span>
                       </label>
                     </p>
@@ -227,27 +280,27 @@ class DashboardAmbulancia extends Component {
                     <br></br>
                     <div id="botonesTriaje" className="btn-group" data-toggle="buttons">
                     <div className="col s2">
-                      <label className="btn-primary btn-floating btn-large" style={{backgroundColor: 'green',
+                      <label className="btn-primary btn-floating btn-large" style={{backgroundColor: 'red',
                           boxShadow: 'inset 0 0 0 99999px rgba(255,255,255,0.5)'}}>
-                        <input type="radio" name="options" id="option1" autocomplete="off"/><h5>1</h5>
+                        <input type="radio" name="options" id="option1" autoComplete="off" value="1"/><h5>1</h5>
                       </label>
                     </div>
                     <div className="col s2 offset-1">
                       <label className="btn-primary btn-floating btn-large" style={{backgroundColor: 'yellow',
                           boxShadow: 'inset 0 0 0 99999px rgba(255,255,255,0.5)'}}>
-                        <input type="radio" name="options" id="option2" autocomplete="off"/><h5 className="black-text">2</h5>
+                        <input type="radio" name="options" id="option2" autoComplete="off" value="2"/><h5 className="black-text">2</h5>
                       </label>
                     </div>
                     <div className="col s2 offset-1">
-                      <label className="btn-primary btn-floating btn-large" style={{backgroundColor: 'red',
+                      <label className="btn-primary btn-floating btn-large" style={{backgroundColor: 'black',
                           boxShadow: 'inset 0 0 0 99999px rgba(255,255,255,0.5)'}}>
-                        <input type="radio" name="options" id="option3" autocomplete="off"/><h5>3</h5>
+                        <input type="radio" name="options" id="option3" autoComplete="off" value="3"/><h5>3</h5>
                       </label>
                     </div>
                     <div className="col s2 offset-3">
-                      <label className="btn-primary btn-floating btn-large" style={{backgroundColor: 'black',
+                      <label className="btn-primary btn-floating btn-large" style={{backgroundColor: 'green',
                           boxShadow: 'inset 0 0 0 99999px rgba(255,255,255,0.5)'}}>
-                        <input type="radio" name="options" id="option3" autocomplete="off"/><h5>4</h5>
+                        <input type="radio" name="options" id="option3" autoComplete="off" value="4"/><h5>4</h5>
                       </label>
                     </div>
                     </div>
@@ -263,29 +316,32 @@ class DashboardAmbulancia extends Component {
                   </div>
 
                   <div className="container col s6 offset-m3 offset-3">
-                    <div class="row">
-                      <div class="row">
-                        <div class="input-field col s12">
-                          <i class="material-icons prefix">mode_edit</i>
+                    <div className="row">
+                      <div className="row">
+                        <div className="input-field col s12">
+                          <i className="material-icons prefix">mode_edit</i>
                           <textarea
-                            id="icon_prefix2"
-                            class="materialize-textarea"
+                            onChange={this.onChange}
+                            value={this.state.valoracion}
+                            id="valoracion"
+                            type="text"
+                            className="materialize-textarea"
                           ></textarea>
-                          <label for="icon_prefix2">Descripción...</label>
+                          <label htmlFor="icon_prefix2">Descripción...</label>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
                 <div className="container center top">
-                  <a
-                    href="http://materializecss.com/getting-started.html"
+                  <button
+                    type="submit"
                     id="enviar-button"
                     className="btn-large waves-effect waves-light blue"
                   >
                     {" "}
                     Enviar solicitud
-                  </a>
+                  </button>
                 </div>
                 <br></br>
                 <br></br>
@@ -298,8 +354,8 @@ class DashboardAmbulancia extends Component {
   }
 }
 
-/*DashboardAmbulancia.propTypes = {
-  //enviarSolicitud: PropTypes.func.isRequired,
+DashboardAmbulancia.propTypes = {
+  enviarSolicitud: PropTypes.func.isRequired,
   auth: PropTypes.object.isRequired,
   placa: PropTypes.string,
 };
@@ -307,8 +363,9 @@ const mapStateToProps = state => ({
   auth: state.auth,
 });
 export default connect(
- // mapStateToProps
-)(DashboardAmbulancia);*/
+    mapStateToProps,
+  { enviarSolicitud }
+)(DashboardAmbulancia);
 
 function getDistance(lat1, lon1, lat2, lon2) {
   var toRad = Math.PI/180;    // Math.PI / 180
@@ -320,4 +377,4 @@ function getDistance(lat1, lon1, lat2, lon2) {
   return 12742 * Math.asin(Math.sqrt(a)); // 2 * R; R = 6371 km
 }
 
-export default DashboardAmbulancia;
+//export default DashboardAmbulancia;

@@ -31,6 +31,21 @@ export const registerMedico = (userData, history) => dispatch => {
       );
   });
 };
+
+export const enviarSolicitud = (userData, history) => dispatch => {
+  replication.test().then(base => {
+    axios
+      .post(base + "/solicitudes/nueva", userData)
+      .then(res => history.push("/countdown")) // re-direct to login on successful register
+      .catch(err =>
+        dispatch({
+          type: GET_ERRORS,
+          payload: err.response.data,
+        })
+      );
+  });
+};
+
 // Login - get user token
 export const loginUser = userData => dispatch => {
   replication.test().then(base => {

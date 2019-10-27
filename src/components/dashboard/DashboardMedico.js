@@ -26,7 +26,7 @@ class Solicitudes extends Component {
     }
 
     componentDidMount() {
-        var myRequest = '/api/solicitudes/filter/' + user.id;
+        var myRequest = 'https://ambulapp-main-server.herokuapp.com/api/solicitudes/filter/' + user.id;
 
         fetch(myRequest)
             .then(response => response.json())

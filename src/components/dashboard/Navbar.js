@@ -26,7 +26,7 @@ class NavBar extends Component {
                 <ul className="right hide-on-med-and-down">
                     <li>{this.props.name}</li>
                     <li>
-                        <a onClick={this.onLogoutClick}>
+                        <a onClick={this.onLogoutClick} href="/#">
                             <i className="material-icons right">exit_to_app</i>
                             <b>SALIR</b>
                         </a>

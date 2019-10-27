@@ -12,7 +12,7 @@ class DashboardAmbulancia extends Component {
 
 
   // ----- REDUX - REACT -----
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     console.log(nextProps);
     if (nextProps.errors) {
       this.setState({
