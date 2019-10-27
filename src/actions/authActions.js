@@ -38,7 +38,8 @@ export const enviarSolicitud = (userData, history) => dispatch => {
       .post(base + "/solicitudes/nueva", userData)
       .then(res => history.push("/countdown")) // re-direct to login on successful register
       .catch(err =>
-        dispatch({
+        dispatch(
+          {
           type: GET_ERRORS,
           payload: err.response.data,
         })

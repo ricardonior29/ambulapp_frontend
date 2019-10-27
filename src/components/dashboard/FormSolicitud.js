@@ -40,6 +40,9 @@ class DashboardAmbulancia extends Component {
  }*/
  
   componentDidMount() {
+    //set ambulancia in solicitud
+    
+
     //form select para tipo de sangre
     const elems = document.querySelectorAll('select');
     M.FormSelect.init(elems, { inDuration: 300, outDuration: 255 });
@@ -88,7 +91,6 @@ class DashboardAmbulancia extends Component {
     {
       allCond.push(cond[i].value)
     }
-    console.log(allCond)
     this.setState({paciente: { ...this.state.paciente, condiciones: allCond}});
   };
 
@@ -127,14 +129,10 @@ class DashboardAmbulancia extends Component {
       paciente: newPaciente,
       latitud: this.state.latitud,
       longitud: this.state.longitud,
-      ambulancia: this.state.ambulancia/*,
-      embarazada: this.state.embarazada,
-      desplazado: this.state.desplazado,
-      victima_violencia: this.state.victima_violencia,
-      discapacitado: this.state.discapacitado,*/
+      ambulancia: this.state.ambulancia
     };
     // ----- REDUX - REACT -----
-    //this.props.enviarSolicitud(newPeticion, this.props.history);
+    this.props.enviarSolicitud(newPeticion, this.props.history);
     console.log('solicitud ', JSON.stringify(newPeticion));
     // -------------------------
     // do something with form values, and then
@@ -149,7 +147,8 @@ class DashboardAmbulancia extends Component {
   };
 
   render() {
-    
+    const { user } = this.props.auth;
+  
     if ("geolocation" in navigator) {
       console.log("Geolocalización disponible");
       navigator.geolocation.getCurrentPosition(position => {
@@ -157,14 +156,12 @@ class DashboardAmbulancia extends Component {
         console.log("Mi posición: "+position.coords.latitude+", "+position.coords.longitude);
         console.log("Posición del hospital: 7.063977,-73.086824"); */
         console.log("Distancia en km: "+getDistance(position.coords.latitude,position.coords.longitude,7.063977,-73.086824));
-        //this.state.latitud = position.coords.latitude;
-        //this.state.longitud = position.coords.latitude;
+        this.setState({ latitud: position.coords.latitude, longitud: position.coords.longitude, ambulancia: user.id});
       });
     } else {
       console.log("Geolocalización no disponible");
     }
 
-    //const { user } = this.props.auth;
     return (
       <div style={{ textAlign: "left" }}>
         <div className="section no-pad-bot center" id="index-banner">
