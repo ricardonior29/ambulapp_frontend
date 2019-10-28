@@ -5,12 +5,12 @@ function getTimeRemaining(endtime) {
     var t = Date.parse(endtime) - Date.parse(new Date());
     var seconds = Math.floor((t / 1000) % 60);
     var minutes = Math.floor((t / 1000 / 60) % 60);
-    var hours = Math.floor((t / (1000 * 60 * 60)) % 24);
-    var days = Math.floor(t / (1000 * 60 * 60 * 24));
+   // var hours = Math.floor((t / (1000 * 60 * 60)) % 24);
+    //var days = Math.floor(t / (1000 * 60 * 60 * 24));
     return {
         'total': t,
-        'days': days,
-        'hours': hours,
+        /*'days': days,
+        'hours': hours,*/
         'minutes': minutes,
         'seconds': seconds
     };
@@ -18,35 +18,57 @@ function getTimeRemaining(endtime) {
 
 function initializeClock(id, endtime) {
     var clock = document.getElementById(id);
-    //console.log(document)
-    /* var daysSpan = clock.querySelector('.days');
-     var hoursSpan = clock.querySelector('.hours');
-    var minutesSpan = clock.querySelector('.minutes');*/
     var secondsSpan = clock.querySelector('.seconds');
 
     function updateClock() {
         var t = getTimeRemaining(endtime);
-        /*      daysSpan.innerHTML = t.days;
-              hoursSpan.innerHTML = ('0' + t.hours).slice(-2);
-        minutesSpan.innerHTML = ('0' + t.minutes).slice(-2);*/
         secondsSpan.innerHTML = ('0' + t.seconds).slice(-2);
 
-        if (t.total <= 0) {
+        if (t.total <= 0) { //terminacion del conteo
             clearInterval(timeinterval);
+            //redirect
+            return true;
         }
     }
 
-    updateClock();
-    var timeinterval = setInterval(updateClock, 980);
+    var timeout = updateClock();
+    var timeinterval = setInterval(updateClock, 1000);
+    return timeout;
 }
 
 class Countdown extends Component {
+    constructor() {
+        super();
+        this.state = {
+          timeout: false
+        }
+    }
 
     componentDidMount() {
         //var deadline = new Date(Date.parse(new Date()) + 15 * 24 * 60 * 60 * 1000);
-        var deadline = new Date(Date.parse(new Date()) + 60 * 1000);
-        initializeClock('clockdiv', deadline);
+        var deadline = new Date(Date.parse(new Date()) + 59 * 1000);
+        var finish = initializeClock('clockdiv', deadline);
+        console.log(finish)
+        if(finish)
+        {
+            this.setState({timeout: true})
+        }
     }
+
+    componentDidUpdate() {
+        console.log('cambio')
+    }
+
+    onTimeout = e => {
+        
+        if(this.state.timeout)
+        {
+            console.log('redirigiendo')
+            this.props.history.push('/ruta')
+        }
+    };
+
+    
 
     render() {
         return (
@@ -54,7 +76,7 @@ class Countdown extends Component {
                 <div className="container">
                     <br /><br />
                     <Header />
-                    <div id="clockdiv">
+                    <div id="clockdiv" onChange={this.onTimeout}>
                         <div>
                             <p className="smalltext">Su solicitud está siendo evaluada por los centros médicos de la zona.</p>
                             <div className="preloader-wrapper big active">
@@ -68,7 +90,7 @@ class Countdown extends Component {
                                     </div>
                                 </div>
                             </div>
-                            <p className="smalltext">  Será redirigido en&nbsp;
+                            <p className="smalltext" onChange={this.onTimeout}>  Será redirigido en&nbsp;
                             <span className="seconds"></span>
                             &nbsp;segundos</p>
                         </div>
@@ -77,6 +99,7 @@ class Countdown extends Component {
             </div>
         );
     }
+
 }
 
 export default Countdown;

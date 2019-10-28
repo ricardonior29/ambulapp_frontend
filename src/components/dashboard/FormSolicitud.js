@@ -133,7 +133,7 @@ class DashboardAmbulancia extends Component {
       ambulancia: this.state.ambulancia
     };
     // ----- REDUX - REACT -----
-    this.props.enviarSolicitud(newPeticion, this.props.history);
+    //this.props.enviarSolicitud(newPeticion, this.props.history);
     console.log('solicitud ', JSON.stringify(newPeticion));
     this.setState({ solicitudEnviada: true });
     //console.log(this.state)
