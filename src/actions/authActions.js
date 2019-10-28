@@ -22,7 +22,7 @@ export const registerMedico = (userData, history) => dispatch => {
   replication.test().then(base => {
     axios
       .post(base + "/centrosmedicos/register", userData)
-      .then(res => history.push("/login")) // re-direct to login on successful register
+      //.then(res => history.push("/login")) // re-direct to login on successful register
       .catch(err =>
         dispatch({
           type: GET_ERRORS,

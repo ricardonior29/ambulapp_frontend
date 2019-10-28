@@ -22,7 +22,8 @@ class DashboardAmbulancia extends Component {
         rh: "",
         condiciones: []
       },      
-      ambulancia: ""//,
+      ambulancia: "",
+      solicitudEnviada: false//,
       /*embarazada: "",
       desplazado: "",
       victima_violencia: "",
@@ -134,15 +135,13 @@ class DashboardAmbulancia extends Component {
     // ----- REDUX - REACT -----
     this.props.enviarSolicitud(newPeticion, this.props.history);
     console.log('solicitud ', JSON.stringify(newPeticion));
+    this.setState({ solicitudEnviada: true });
+    //console.log(this.state)
+    //console.log(this.state.solicitudEnviada)
+    //this.props.methodfromparent(this.state.solicitudEnviada);
+    this.props.methodfromparent(true);
     // -------------------------
     // do something with form values, and then
-   /* axios.post('/api/solicitudes/nueva', newPeticion).then(response => {
-        console.log('Solicitud guardada');
-        // do something with response, and on response
-    }).catch(error => {
-        console.log('Problema guardando la solicitud');
-        // do something when request was unsuccessful
-    });*/
 
   };
 
@@ -353,6 +352,7 @@ class DashboardAmbulancia extends Component {
 
 DashboardAmbulancia.propTypes = {
   enviarSolicitud: PropTypes.func.isRequired,
+  methodfromparent: PropTypes.func.isRequired,
   auth: PropTypes.object.isRequired,
   placa: PropTypes.string,
 };
@@ -361,6 +361,7 @@ const mapStateToProps = state => ({
 });
 export default connect(
     mapStateToProps,
+    //{ methodfromparent },
   { enviarSolicitud }
 )(DashboardAmbulancia);
 

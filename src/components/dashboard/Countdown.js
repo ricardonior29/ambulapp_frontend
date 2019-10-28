@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import NavBar from "./Navbar"
 import Header from "../layout/Header";
 
 function getTimeRemaining(endtime) {
@@ -19,7 +18,7 @@ function getTimeRemaining(endtime) {
 
 function initializeClock(id, endtime) {
     var clock = document.getElementById(id);
-    console.log(document)
+    //console.log(document)
     /* var daysSpan = clock.querySelector('.days');
      var hoursSpan = clock.querySelector('.hours');
     var minutesSpan = clock.querySelector('.minutes');*/
@@ -38,7 +37,7 @@ function initializeClock(id, endtime) {
     }
 
     updateClock();
-    var timeinterval = setInterval(updateClock, 1000);
+    var timeinterval = setInterval(updateClock, 980);
 }
 
 class Countdown extends Component {
@@ -46,35 +45,31 @@ class Countdown extends Component {
     componentDidMount() {
         //var deadline = new Date(Date.parse(new Date()) + 15 * 24 * 60 * 60 * 1000);
         var deadline = new Date(Date.parse(new Date()) + 60 * 1000);
-        console.log(deadline);
         initializeClock('clockdiv', deadline);
     }
 
     render() {
         return (
             <div >
-                <div className="navbar-fixed" style={{ textAlign: "left" }}>
-                    <NavBar name = {'afdsaf'}/>
-                </div>
-                <div class="container">
+                <div className="container">
                     <br /><br />
                     <Header />
                     <div id="clockdiv">
                         <div>
-                            <p class="smalltext">Su solicitud está siendo evaluada por los centros médicos de la zona.</p>
-                            <div class="preloader-wrapper big active">
-                                <div class="spinner-layer spinner-blue">
-                                    <div class="circle-clipper left">
-                                        <div class="circle"></div>
-                                    </div><div class="gap-patch">
-                                        <div class="circle"></div>
-                                    </div><div class="circle-clipper right">
-                                        <div class="circle"></div>
+                            <p className="smalltext">Su solicitud está siendo evaluada por los centros médicos de la zona.</p>
+                            <div className="preloader-wrapper big active">
+                                <div className="spinner-layer spinner-blue-only">
+                                    <div className="circle-clipper left">
+                                        <div className="circle"></div>
+                                    </div><div className="gap-patch">
+                                        <div className="circle"></div>
+                                    </div><div className="circle-clipper right">
+                                        <div className="circle"></div>
                                     </div>
                                 </div>
                             </div>
-                            <p class="smalltext">  Será redirigido en&nbsp;
-                            <span class="seconds"></span>
+                            <p className="smalltext">  Será redirigido en&nbsp;
+                            <span className="seconds"></span>
                             &nbsp;segundos</p>
                         </div>
                     </div>
