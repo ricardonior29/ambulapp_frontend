@@ -9,6 +9,7 @@ class DashboardAmbulancia extends Component {
   constructor() {
     super();
     this.state = {
+      id: "",
       nivel_triaje: "",
       latitud: "",
       longitud: "",
@@ -23,7 +24,6 @@ class DashboardAmbulancia extends Component {
         condiciones: []
       },      
       ambulancia: "",
-      solicitudEnviada: false//,
       /*embarazada: "",
       desplazado: "",
       victima_violencia: "",
@@ -70,13 +70,19 @@ class DashboardAmbulancia extends Component {
 
   // ----- REDUX - REACT -----
   UNSAFE_componentWillReceiveProps(nextProps) {
-    console.log(nextProps);
+    if(nextProps.auth.solicitud)
+    {
+      this.setState({
+        id: nextProps.auth.solicitud._id,
+      });
+    }
     if (nextProps.errors) {
       this.setState({
         errors: nextProps.errors,
       });
     }
   }
+
   // -------------------------
 
   onChange = e => {
@@ -133,28 +139,22 @@ class DashboardAmbulancia extends Component {
       ambulancia: this.state.ambulancia
     };
     // ----- REDUX - REACT -----
-    //this.props.enviarSolicitud(newPeticion, this.props.history);
+    this.props.enviarSolicitud(newPeticion, this.props.history);
     console.log('solicitud ', JSON.stringify(newPeticion));
-    this.setState({ solicitudEnviada: true });
-    //console.log(this.state)
-    //console.log(this.state.solicitudEnviada)
-    //this.props.methodfromparent(this.state.solicitudEnviada);
-    this.props.methodfromparent(true);
+    console.log(this.props)
+    this.props.methodfromparent(true, newPeticion.latitud, newPeticion.longitud);
     // -------------------------
     // do something with form values, and then
 
   };
 
   render() {
+    //console.log(this.props)
     const { user } = this.props.auth;
   
     if ("geolocation" in navigator) {
-      console.log("Geolocalización disponible");
       navigator.geolocation.getCurrentPosition(position => {
-        /*console.log(position.coords.accuracy);
         console.log("Mi posición: "+position.coords.latitude+", "+position.coords.longitude);
-        console.log("Posición del hospital: 7.063977,-73.086824"); */
-        console.log("Distancia en km: "+getDistance(position.coords.latitude,position.coords.longitude,7.063977,-73.086824));
         this.setState({ latitud: position.coords.latitude, longitud: position.coords.longitude, ambulancia: user.id});
       });
     } else {
@@ -364,15 +364,3 @@ export default connect(
     //{ methodfromparent },
   { enviarSolicitud }
 )(DashboardAmbulancia);
-
-function getDistance(lat1, lon1, lat2, lon2) {
-  var toRad = Math.PI/180;    // Math.PI / 180
-  var c = Math.cos;
-  var a = 0.5 - c((lat2 - lat1) * toRad)/2 + 
-          c(lat1 * toRad) * c(lat2 * toRad) * 
-          (1 - c((lon2 - lon1) * toRad))/2;
-
-  return 12742 * Math.asin(Math.sqrt(a)); // 2 * R; R = 6371 km
-}
-
-//export default DashboardAmbulancia;

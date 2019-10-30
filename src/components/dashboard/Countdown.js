@@ -1,74 +1,58 @@
 import React, { Component } from "react";
 import Header from "../layout/Header";
-
-function getTimeRemaining(endtime) {
-    var t = Date.parse(endtime) - Date.parse(new Date());
-    var seconds = Math.floor((t / 1000) % 60);
-    var minutes = Math.floor((t / 1000 / 60) % 60);
-   // var hours = Math.floor((t / (1000 * 60 * 60)) % 24);
-    //var days = Math.floor(t / (1000 * 60 * 60 * 24));
-    return {
-        'total': t,
-        /*'days': days,
-        'hours': hours,*/
-        'minutes': minutes,
-        'seconds': seconds
-    };
-}
-
-function initializeClock(id, endtime) {
-    var clock = document.getElementById(id);
-    var secondsSpan = clock.querySelector('.seconds');
-
-    function updateClock() {
-        var t = getTimeRemaining(endtime);
-        secondsSpan.innerHTML = ('0' + t.seconds).slice(-2);
-
-        if (t.total <= 0) { //terminacion del conteo
-            clearInterval(timeinterval);
-            //redirect
-            return true;
-        }
-    }
-
-    var timeout = updateClock();
-    var timeinterval = setInterval(updateClock, 1000);
-    return timeout;
-}
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
 
 class Countdown extends Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
           timeout: false
         }
     }
 
     componentDidMount() {
-        //var deadline = new Date(Date.parse(new Date()) + 15 * 24 * 60 * 60 * 1000);
-        var deadline = new Date(Date.parse(new Date()) + 59 * 1000);
-        var finish = initializeClock('clockdiv', deadline);
-        console.log(finish)
-        if(finish)
-        {
-            this.setState({timeout: true})
+        const comp = this;
+        function getTimeRemaining(endtime) {
+            var t = Date.parse(endtime) - Date.parse(new Date());
+            var seconds = Math.floor((t / 1000) % 60);
+            var minutes = Math.floor((t / 1000 / 60) % 60);
+           // var hours = Math.floor((t / (1000 * 60 * 60)) % 24);
+            //var days = Math.floor(t / (1000 * 60 * 60 * 24));
+            return {
+                'total': t,
+                /*'days': days,
+                'hours': hours,*/
+                'minutes': minutes, 
+                'seconds': seconds
+            };
         }
-    }
-
-    componentDidUpdate() {
-        console.log('cambio')
-    }
-
-    onTimeout = e => {
         
-        if(this.state.timeout)
-        {
-            console.log('redirigiendo')
-            this.props.history.push('/ruta')
+        function initializeClock(id, endtime) {
+            var clock = document.getElementById(id);
+            var secondsSpan = clock.querySelector('.seconds');
+        
+            function updateClock() {
+                var t = getTimeRemaining(endtime);
+                secondsSpan.innerHTML = ('0' + t.seconds).slice(-2);
+        
+                if (t.total <= 0) { //terminacion del conteo
+                    clearInterval(timeinterval);
+                    //hist.push("ruta"); //redirect
+                    comp.setState({timeout: true})
+                    comp.props.methodfromparent(true);
+                    return true;
+                }
+            }
+        
+            var timeout = updateClock();
+            var timeinterval = setInterval(updateClock, 1000);
+            return timeout;
         }
-    };
-
-    
+        //var deadline = new Date(Date.parse(new Date()) + 15 * 24 * 60 * 60 * 1000);
+        var deadline = new Date(Date.parse(new Date()) + 30 * 1000);
+        initializeClock('clockdiv', deadline);
+    }
 
     render() {
         return (
@@ -102,4 +86,13 @@ class Countdown extends Component {
 
 }
 
-export default Countdown;
+Countdown.propTypes = {
+    methodfromparent: PropTypes.func.isRequired,
+  };
+  const mapStateToProps = state => ({
+  });
+  export default connect(
+      mapStateToProps
+  )(Countdown);
+
+//export default Countdown;

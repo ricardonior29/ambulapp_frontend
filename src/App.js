@@ -14,7 +14,6 @@ import RegisterMedico from "./components/auth/RegisterMedico";
 import Login from "./components/auth/Login";
 import DashboardAmbulancia from "./components/dashboard/DashboardAmbulancia";
 import DashboardMedico from "./components/dashboard/DashboardMedico";
-import CentroMedicoSel from "./components/dashboard/CentroMedicoSel";
 
 import { Provider } from "react-redux"; //used to manage state between components
 import store from "./store";
@@ -48,8 +47,6 @@ function App() {
           <Route exact path="/login" component={Login} />
           <Switch>
             <PrivateRoute exact path="/ambulancia/dashboard" component={DashboardAmbulancia} />
-            <PrivateRoute exact path="/ambulancia/ruta" component={CentroMedicoSel}/>
-
             <PrivateRoute exact path="/centromedico/dashboard" component={DashboardMedico} />
           </Switch>
         </div>

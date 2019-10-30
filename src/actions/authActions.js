@@ -36,7 +36,32 @@ export const enviarSolicitud = (userData, history) => dispatch => {
   replication.test().then(base => {
     axios
       .post(base + "/solicitudes/nueva", userData)
-      .then(res => history.push("/countdown")) // re-direct to login on successful register
+      .then(res => {
+        dispatch({
+          type: "GET_RESPONSE",
+          payload: res.data,
+          idSolicitud: res.data_id
+        })
+        //history.push("/countdown") // re-direct to login on successful register
+      }) 
+      .catch(err => {
+        console.log(err)
+        dispatch({
+          type: GET_ERRORS,
+          payload: err.response.data,
+        })}
+      );
+  });
+};
+
+/*export const getSolicitudes = (userData, history) => dispatch => {
+  replication.test().then(base => {
+    axios
+      .get(base + "/solicitudes/filter", userData)
+      .then((data) => {
+        console.log('Update Complete');
+        this.setState({ classroom: data })
+      }) // re-direct to login on successful register
       .catch(err =>
         dispatch(
           {
@@ -45,7 +70,7 @@ export const enviarSolicitud = (userData, history) => dispatch => {
         })
       );
   });
-};
+};*/
 
 // Login - get user token
 export const loginUser = userData => dispatch => {
