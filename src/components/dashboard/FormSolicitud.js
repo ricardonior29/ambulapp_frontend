@@ -24,6 +24,7 @@ class DashboardAmbulancia extends Component {
         condiciones: []
       },      
       ambulancia: "",
+      updated: false
       /*embarazada: "",
       desplazado: "",
       victima_violencia: "",
@@ -65,6 +66,15 @@ class DashboardAmbulancia extends Component {
           siblings[i].firstChild.classList.remove('active');
         }
       } )
+    }
+
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(position => {
+        console.log("Mi posición: "+position.coords.latitude+", "+position.coords.longitude);
+        this.setState({ latitud: position.coords.latitude, longitud: position.coords.longitude});
+      });
+    } else {
+      console.log("Geolocalización no disponible");
     }
   }
 
@@ -151,16 +161,12 @@ class DashboardAmbulancia extends Component {
   render() {
     //console.log(this.props)
     const { user } = this.props.auth;
-  
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(position => {
-        console.log("Mi posición: "+position.coords.latitude+", "+position.coords.longitude);
-        this.setState({ latitud: position.coords.latitude, longitud: position.coords.longitude, ambulancia: user.id});
-      });
-    } else {
-      console.log("Geolocalización no disponible");
+    if(!this.state.updated)
+    {
+      this.setState({ambulancia: user.id, updated: true})
     }
-
+    
+    
     return (
       <div style={{ textAlign: "left" }}>
         <div className="section no-pad-bot center" id="index-banner">

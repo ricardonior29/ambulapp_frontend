@@ -17,12 +17,12 @@ class CardCentroMedico extends Component {
                 <br /><br />
                 <div className="card" style={styleImg}>
                     <div className="card-image waves-effect waves-block waves-light">
-                        <img className="activator" src="http://noticias.canaltro.com/wp-content/uploads/2019/07/HUS-Bucarmanga.jpeg" alt="HUS" />
+                        <img className="activator" src="https://www.periodico15.com/wp-content/uploads/2016/09/Foto-3.jpg" alt="HUS" />
                     </div>
                     <div className="card-content">
-                        <span className="card-title activator grey-text text-darken-4">{this.props.nombre}</span>
+                        <span className="card-title activator grey-text text-darken-4"><b>{this.props.nombre}</b></span>
                         <p>{this.props.dir}</p>
-                        <p>Distancia estimada de aproximadamente {Math.round(this.props.distancia, 2)} km</p>
+                        <p>Distancia estimada de aproximadamente {Math.ceil(this.props.distancia, 2)} km</p>
                     </div>
                 </div>
             </div>
