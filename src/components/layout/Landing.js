@@ -7,7 +7,7 @@ class Landing extends Component {
     return (
       <div>
       <br></br><br></br>  
-        <Header />
+      <div className="row"><Header /></div>
         <div style={{ height: "55vh" }} className="container valign-wrapper">
           <div className="row">
             <div className="col s12 top-align">
@@ -34,8 +34,8 @@ class Landing extends Component {
               <h5>Crear cuenta como:</h5>
               <br />
               <div className="row">
-                <div className="col s12 center-align">
-                  <div className="col s6">
+                <div className="center-align">
+                  <div className="row col s12 l6">
                     <Link
                       to="/ambulancia/register"
                       style={{
@@ -47,9 +47,8 @@ class Landing extends Component {
                     >
                       Ambulancia
                     </Link>
-                  </div>
-
-                  <div className="col s6">
+                  </div>                 
+                  <div className="row col s12 l6">
                     <Link
                       to="/centromedico/register"
                       style={{
