@@ -17,7 +17,7 @@ class CardCentroMedico extends Component {
                 <br /><br />
                 <div className="card" style={styleImg}>
                     <div className="card-image waves-effect waves-block waves-light">
-                        <img className="activator" src="https://www.periodico15.com/wp-content/uploads/2016/09/Foto-3.jpg" alt="HUS" />
+                        <img className="activator" src={this.props.img} alt="HUS" />
                     </div>
                     <div className="card-content">
                         <span className="card-title activator grey-text text-darken-4"><b>{this.props.nombre}</b></span>
@@ -49,22 +49,26 @@ class SeleccionCentroMedico extends Component {
             let centromedico = {
                 nombre: '',
                 direccion: '',
-                distancia: Number.MAX_VALUE
+                distancia: Number.MAX_VALUE,
+                imagen: ''
             }
 
             fetch(centrosmedicos)
                 .then(response => response.json())
                 .then(data => {
                     var listaRtas = this.props.rtas
+                    console.log(listaRtas)
                     if (listaRtas === undefined) {
                         console.log('no hay respuestas')
                         for (var k = 0; k < data.length; k++) {
                             var d = getDistance(data[k].latitud, data[k].longitud, this.props.latitud, this.props.longitud);
+                            console.log(data[k].nombre, d)
                             if (d < centromedico.distancia) {
                                 centromedico = {
                                     nombre: data[k].nombre,
                                     direccion: data[k].direccion,
-                                    distancia: d
+                                    distancia: d,
+                                    imagen: data[k].imagen
                                 }
                                 comp.setState({ centromedico: centromedico, rendered: true })
                             }
@@ -80,7 +84,8 @@ class SeleccionCentroMedico extends Component {
                                             centromedico = {
                                                 nombre: data[j].nombre,
                                                 direccion: data[j].direccion,
-                                                distancia: distancia
+                                                distancia: distancia,
+                                                imagen: data[k].imagen
                                             }
                                             comp.setState({ centromedico: centromedico, rendered: true })
                                         }
@@ -103,7 +108,7 @@ class SeleccionCentroMedico extends Component {
         return (
             <div>
                 {this.state.timeout ?
-                    <CardCentroMedico nombre={this.state.centromedico.nombre} dir={this.state.centromedico.direccion} distancia={this.state.centromedico.distancia} /> :
+                    <CardCentroMedico nombre={this.state.centromedico.nombre} dir={this.state.centromedico.direccion} distancia={this.state.centromedico.distancia} img={this.state.centromedico.imagen} /> :
                     <Countdown methodfromparent={this.parentmethod} />}
             </div>
         );

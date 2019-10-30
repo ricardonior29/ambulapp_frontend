@@ -151,7 +151,7 @@ class Solicitudes extends Component {
         }
 
         const aceptadas = this.state.confirmadas.map((a, i) =>
-            <li id={"solicitud_" + a.ID_solicitud} className="collection-item" style={{ borderLeft: '10px solid ', backgroundColor: '#e4e4e4', padding: '10px'}} key={'c' + a._id}>
+            <li id={"solicitud_" + a.ID_solicitud} className="collection-item" style={{ borderLeft: '10px solid #e4e4e4', backgroundColor: '#e4e4e4', padding: '10px'}} key={'c' + a._id}>
                 <div className="row valign-wrapper" style={{ margin: 0, textAlign: 'center', padding: '0px' }}>
                     <div className="col s1">
                         <p className="collections-title"><b>{i + 1}</b></p>
