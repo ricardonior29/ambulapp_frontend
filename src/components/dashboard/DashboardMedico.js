@@ -4,6 +4,8 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import NavBar from "./Navbar"
 
+const host = 'https://ambulapp-main-server.herokuapp.com/api';
+
 let containerstyle = {
     display: 'flex',
     justifyContent: 'center',
@@ -22,37 +24,94 @@ let { user } = 0;
 class Solicitudes extends Component {
     constructor() {
         super()
-        this.state = { solicitudes: [] }
+        this.state = { solicitudes: [], confirmadas: [] }
     }
 
     componentDidMount() {
-        var myRequest = 'https://ambulapp-main-server.herokuapp.com/api/solicitudes/filter/' + user.id;
+        const getUnanswered = host + '/solicitudes/filter/' + user.id;
 
-        fetch(myRequest)
+        fetch(getUnanswered)
             .then(response => response.json())
             .then(data => {
                 this.setState({ solicitudes: data })
             })
+
+        this.getSolicitudesResueltas();
+    }
+    
+    componentDidUpdate() {
+        this.getSolicitudesResueltas();
     }
 
-    handleSubmit(event, idSolicitud, idCentroMedico, aceptada) {
+    getSolicitudesResueltas() { 
+        const accepted =  host + '/solicitudes/aceptadas/' + user.id;
+
+        fetch(accepted)
+            .then(response => response.json())
+            .then(data => {
+                this.setState({ confirmadas: data })
+            })
+    }
+
+    /*handleUpdate(event){
+
+    }*/
+
+    handleSubmit(event, idSolicitud, idCentroMedico, rta) {
         /*const {
           s
         } = this.state;*/
         event.preventDefault();
 
         // do something with form values, and then
-        axios.post('/api/solicitudes/' + idSolicitud, {
+        axios.post(host + '/solicitudes/' + idSolicitud, {
             id: idCentroMedico,
-            aceptada: aceptada.toString()
+            aceptada: rta
             // + any other parameters you want to send in the POST request
         }).then(response => {
             console.log('Respuesta exitosa del post');
             // do something with response, and on response
-        }).catch(error => {
+        
+        }
+        
+        ).catch(error => {
             console.log('error en el post');
             // do something when request was unsuccessful
-        });
+        }); 
+    }
+
+    handleAdmitido(event, idSolicitud, idCentroMedico, rta) {
+        /*const {
+          s
+        } = this.state;*/
+        event.preventDefault();
+
+        // do something with form values, and then
+        axios.post(host + '/solicitudes/' + idSolicitud, {
+            id: idCentroMedico,
+            aceptada: rta,
+            fecha_admision: Date.now()
+            // + any other parameters you want to send in the POST request
+        }).then(response => {
+            console.log('Respuesta exitosa del post');
+            // do something with response, and on response
+        
+        }
+        
+        ).catch(error => {
+            console.log('error en el post');
+            // do something when request was unsuccessful
+        }); 
+    }
+
+    filterSolicitud(event, a){
+        event.preventDefault();
+        this.setState({
+            confirmadas: this.state.confirmadas.filter(function (solicitud) {
+                console.log(solicitud)
+                return solicitud !== a
+            })
+        })
     }
 
 
@@ -91,33 +150,64 @@ class Solicitudes extends Component {
             return color;
         }
 
-        const listItems = this.state.solicitudes.map((a, i) =>
-            <li id={"solicitud_" + a.ID_solicitud} className="collection-item" style={{ borderLeft: '10px solid ' + colortriaje(a.nivel_triaje) , padding: '10px'}} key={'c' + a._id}>
-                <div className="row valign-wrapper" style={{ margin: 0 , textAlign: 'center', padding: '0px'}}>
-                    <div className="col s0.5">
+        const aceptadas = this.state.confirmadas.map((a, i) =>
+            <li id={"solicitud_" + a.ID_solicitud} className="collection-item" style={{ borderLeft: '10px solid ', backgroundColor: '#e4e4e4', padding: '10px'}} key={'c' + a._id}>
+                <div className="row valign-wrapper" style={{ margin: 0, textAlign: 'center', padding: '0px' }}>
+                    <div className="col s1">
                         <p className="collections-title"><b>{i + 1}</b></p>
                     </div>
                     <div className="col s2">
                         <p className="collections-content">{timeformat(a.fecha_creacion)}</p>
                     </div>
-                    <div className="col s1" style={{margin: '0px', padding: '0px', alignContent: 'center'}}>
-                        <span className={'new badge ' + colortriaje(a.nivel_triaje) + ' center-align'} data-badge-caption="" style={a.nivel_triaje === 2 ? { color: 'black', margin: 'auto'} : { color: 'white', margin: 'auto' }} >{'Nivel ' + a.nivel_triaje}</span>
+                    <div className="col s1" style={{ margin: '0px', padding: '0px', alignContent: 'center' }}>
+                        <span className={'new badge ' + colortriaje(a.nivel_triaje) + ' center-align'} data-badge-caption="" style={a.nivel_triaje === 2 ? { color: 'black', margin: 'auto' } : { color: 'white', margin: 'auto' }} >{'Nivel ' + a.nivel_triaje}</span>
                     </div>
-                    <div className="col s4" style={{marginLeft: '40px'}}>
+                    <div className="col s4" style={{ marginLeft: '40px' }}>
                         <p className="collections-content" align="justify" >{a.valoracion}</p>
-                        {a.paciente.condiciones[0] ? <div className ='chip' align="left" style={{margin: '5px', color: 'rgb(171, 165, 165)'}}>Embarazada</div> : null}
-                        {a.paciente.condiciones[1] ? <div className ='chip' align="left" style={{margin: '5px', color: 'rgb(171, 165, 165)'}}>Desplazado</div> : null}
-                        {a.paciente.condiciones[2] ? <div className ='chip' align="left" style={{margin: '5px', color: 'rgb(171, 165, 165)'}}>Víctima de violencia</div> : null}
-                        {a.paciente.condiciones[3] ? <div className ='chip' align="left" style={{margin: '5px', color: 'rgb(171, 165, 165)'}}>Discapacitado</div> : null}
                     </div>
-                    <div className="col s2" style={{margin: '0px'}}>
+                    <div className="col s2" style={{ margin: '0px' }}>
+                        <p className="collections-content">{a.paciente.edad ? a.paciente.edad + ' años' : 'Sin datos'} </p>
+                    </div>
+                    <div className="col s2">
+                            <button onClick={event => {
+                                this.handleSubmit(event, a._id, user.id, 'admitido');
+                                this.filterSolicitud(event,a)}} 
+                                className="waves-effect waves-light btn yellow accent-2 black-text">
+                                <i className="material-icons">spellcheck</i>
+                            </button>
+                    </div>
+                </div>
+            </li>
+        );
+
+        const listItems = this.state.solicitudes.map((a, i) =>
+            <li id={"solicitud_" + a.ID_solicitud} className="collection-item" style={{ borderLeft: '10px solid ' + colortriaje(a.nivel_triaje), padding: '10px' }} key={'c' + a._id}>
+                <div className="row valign-wrapper" style={{ margin: 0, textAlign: 'center', padding: '0px' }}>
+                    <div className="col s1">
+                        <p className="collections-title"><b>{i + 1}</b></p>
+                    </div>
+                    <div className="col s2">
+                        <p className="collections-content">{timeformat(a.fecha_creacion)}</p>
+                    </div>
+                    <div className="col s1" style={{ margin: '0px', padding: '0px', alignContent: 'center' }}>
+                        <span className={'new badge ' + colortriaje(a.nivel_triaje) + ' center-align'} data-badge-caption="" style={a.nivel_triaje === 2 ? { color: 'black', margin: 'auto' } : { color: 'white', margin: 'auto' }} >{'Nivel ' + a.nivel_triaje}</span>
+                    </div>
+                    <div className="col s4" style={{ marginLeft: '40px' }}>
+                        <p className="collections-content" align="justify" >{a.valoracion}</p>
+                        {a.paciente.condiciones[0] ? <div className='chip' align="left" style={{ margin: '5px', color: 'rgb(171, 165, 165)' }}>Embarazada</div> : null}
+                        {a.paciente.condiciones[1] ? <div className='chip' align="left" style={{ margin: '5px', color: 'rgb(171, 165, 165)' }}>Desplazado</div> : null}
+                        {a.paciente.condiciones[2] ? <div className='chip' align="left" style={{ margin: '5px', color: 'rgb(171, 165, 165)' }}>Víctima de violencia</div> : null}
+                        {a.paciente.condiciones[3] ? <div className='chip' align="left" style={{ margin: '5px', color: 'rgb(171, 165, 165)' }}>Discapacitado</div> : null}
+                    </div>
+                    <div className="col s2" style={{ margin: '0px' }}>
                         <p className="collections-content">{a.paciente.edad ? a.paciente.edad + ' años' : 'Sin datos'} </p>
                     </div>
                     <div className="col s0.8">
                         <form
                             method="post"
                             onSubmit={event => {
-                                this.handleSubmit(event, a._id, user.id, true);
+                                this.handleSubmit(event, a._id, user.id, 'true');
+                                //this.handleUpdate;
                                 this.setState({
                                     solicitudes: this.state.solicitudes.filter(function (solicitud) {
                                         console.log(solicitud)
@@ -134,7 +224,7 @@ class Solicitudes extends Component {
                         <form
                             method="post"
                             onSubmit={event => {
-                                this.handleSubmit(event, a._id, user.id, false);
+                                this.handleSubmit(event, a._id, user.id, 'false');
                                 this.setState({
                                     solicitudes: this.state.solicitudes.filter(function (solicitud) {
                                         console.log(a)
@@ -154,7 +244,7 @@ class Solicitudes extends Component {
         return (
             <div style={{ textAlign: "left" }}>
                 <div className="navbar-fixed">
-                    <NavBar name = {user.nombre}/>
+                    <NavBar name={user.nombre} />
                 </div>
                 <div className="container" style={containerstyle}>
                     <div className="row " style={rowstyle}>
@@ -166,7 +256,7 @@ class Solicitudes extends Component {
                                             <div className="col s1"><h6><b>#</b></h6></div>
                                             <div className="col s2"><h6><b>Hora</b></h6></div>
                                             <div className="col s1"><h6><b>Triaje</b></h6></div>
-                                            <div className="col s5" style={{marginLeft: '50px'}}>
+                                            <div className="col s5" style={{ marginLeft: '50px' }}>
                                                 <h6><b>Descripción de la emergencia</b></h6>
                                             </div>
                                             <div className="col s2.5"><h6><b>Edad del paciente</b></h6></div>
@@ -174,6 +264,7 @@ class Solicitudes extends Component {
                                         </div>
                                     </li>
                                     {listItems}
+                                    {aceptadas}
                                 </ul>
                             </div>
                         </div>
