@@ -15,8 +15,6 @@ import Login from "./components/auth/Login";
 import DashboardAmbulancia from "./components/dashboard/DashboardAmbulancia";
 import DashboardMedico from "./components/docs/OpenApi";
 
-import OpenApi from "./components/dashboard/DashboardMedico";
-
 import { Provider } from "react-redux"; //used to manage state between components
 import store from "./store";
 
@@ -47,7 +45,6 @@ function App() {
           <Route exact path="/ambulancia/register" component={RegisterAmbulancia} />
           <Route exact path="/centromedico/register" component={RegisterMedico} />
           <Route exact path="/login" component={Login} />
-          <Route exact path="/openapi" component={OpenApi} />
           <Switch>
             <PrivateRoute exact path="/ambulancia/dashboard" component={DashboardAmbulancia} />
             <PrivateRoute exact path="/centromedico/dashboard" component={DashboardMedico} />
