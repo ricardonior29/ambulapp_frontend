@@ -10,17 +10,23 @@ const styleImg = {
 
 const host = 'https://ambulapp-main-server.herokuapp.com/api';
 
+const default_img = 'http://valmy.com/clubvalmy/wp-content/plugins/smg-theme-tools/public/images/not-available-es.png';
+
 class CardCentroMedico extends Component {
     render() {
+         
+        
         return (
             <div>
                 <br /><br />
                 <div className="card" style={styleImg}>
                     <div className="card-image waves-effect waves-block waves-light">
-                        <img className="activator" src={this.props.img} alt="HUS" />
+                        <img className="activator" src={this.props.img.length > 0? this.props.img : default_img} alt="img centro medico" />
                     </div>
                     <div className="card-content">
-                        <span className="card-title activator grey-text text-darken-4"><b>{this.props.nombre}</b></span>
+                        <span className="card-title activator grey-text text-darken-4">
+                            <b>{this.props.nombre}</b>
+                        </span>
                         <p>{this.props.dir}</p>
                         <p>Distancia estimada de aproximadamente {Math.ceil(this.props.distancia, 2)} km</p>
                     </div>
@@ -34,11 +40,12 @@ class SeleccionCentroMedico extends Component {
 
     constructor() {
         super();
-        this.parentmethod = this.parentmethod.bind(this);
+        this.onTimeout = this.onTimeout.bind(this);
         this.state = {
             timeout: false,
             centromedico: '',
-            rendered: false
+            rendered: false,
+            respuestas: '',
         }
     }
 
@@ -56,7 +63,7 @@ class SeleccionCentroMedico extends Component {
             fetch(centrosmedicos)
                 .then(response => response.json())
                 .then(data => {
-                    var listaRtas = this.props.rtas
+                    var listaRtas = this.state.respuestas
                     console.log(listaRtas)
                     if (listaRtas === undefined) {
                         console.log('no hay respuestas')
@@ -80,12 +87,13 @@ class SeleccionCentroMedico extends Component {
                                 for (var j = 0; j < data.length; j++) {
                                     if (data[j]._id === listaRtas[i].id) {
                                         var distancia = getDistance(data[j].latitud, data[j].longitud, this.props.latitud, this.props.longitud);
+                                        console.log(data[j].nombre, distancia)
                                         if (distancia < centromedico.distancia) {
                                             centromedico = {
                                                 nombre: data[j].nombre,
                                                 direccion: data[j].direccion,
                                                 distancia: distancia,
-                                                imagen: data[k].imagen
+                                                imagen: data[j].imagen
                                             }
                                             comp.setState({ centromedico: centromedico, rendered: true })
                                         }
@@ -98,10 +106,19 @@ class SeleccionCentroMedico extends Component {
         }
     }
 
-    parentmethod(estado) {
+    onTimeout(estado) {
         this.setState({
             timeout: estado
         });
+
+        const solicitud = host + '/solicitudes/' + this.props.idsolicitud;
+        fetch(solicitud)
+            .then(response => response.json())
+            .then(data => {
+                this.setState({
+                  respuestas: data.centros_medicos
+                });
+            })
     }
 
     render() {
@@ -109,7 +126,7 @@ class SeleccionCentroMedico extends Component {
             <div>
                 {this.state.timeout ?
                     <CardCentroMedico nombre={this.state.centromedico.nombre} dir={this.state.centromedico.direccion} distancia={this.state.centromedico.distancia} img={this.state.centromedico.imagen} /> :
-                    <Countdown methodfromparent={this.parentmethod} />}
+                    <Countdown methodfromparent={this.onTimeout} />}
             </div>
         );
     }

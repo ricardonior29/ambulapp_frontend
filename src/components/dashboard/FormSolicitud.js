@@ -9,7 +9,7 @@ class DashboardAmbulancia extends Component {
   constructor() {
     super();
     this.state = {
-      id: "",
+      idsolicitud: "",
       nivel_triaje: "",
       latitud: "",
       longitud: "",
@@ -23,12 +23,7 @@ class DashboardAmbulancia extends Component {
         rh: "",
         condiciones: []
       },      
-      ambulancia: "",
-      updated: false
-      /*embarazada: "",
-      desplazado: "",
-      victima_violencia: "",
-      discapacitado: "",*/
+      //ambulancia: "",
     };
   }
   
@@ -83,8 +78,9 @@ class DashboardAmbulancia extends Component {
     if(nextProps.auth.solicitud)
     {
       this.setState({
-        id: nextProps.auth.solicitud._id,
+        idsolicitud: nextProps.auth.solicitud._id,
       });
+      this.props.methodfromparent(true, this.state.latitud, this.state.longitud, nextProps.auth.idsolicitud);
     }
     if (nextProps.errors) {
       this.setState({
@@ -146,13 +142,13 @@ class DashboardAmbulancia extends Component {
       paciente: newPaciente,
       latitud: this.state.latitud,
       longitud: this.state.longitud,
-      ambulancia: this.state.ambulancia
+      ambulancia: this.props.auth.user.id
     };
     // ----- REDUX - REACT -----
     this.props.enviarSolicitud(newPeticion, this.props.history);
-    console.log('solicitud ', JSON.stringify(newPeticion));
-    console.log(this.props)
-    this.props.methodfromparent(true, newPeticion.latitud, newPeticion.longitud);
+    //console.log('solicitud ', JSON.stringify(newPeticion))
+    //console.log(this.state)
+    //this.props.methodfromparent(true, newPeticion.latitud, newPeticion.longitud, this.props.auth.idsolicitud);
     // -------------------------
     // do something with form values, and then
 
@@ -160,13 +156,8 @@ class DashboardAmbulancia extends Component {
 
   render() {
     //console.log(this.props)
-    const { user } = this.props.auth;
-    if(!this.state.updated)
-    {
-      this.setState({ambulancia: user.id, updated: true})
-    }
-    
-    
+    //const { user } = this.props.auth;
+
     return (
       <div style={{ textAlign: "left" }}>
         <div className="section no-pad-bot center" id="index-banner">

@@ -9,7 +9,7 @@ const initialState = {
   loading: false,
   isambulance: false,
   solicitud: '',
-  idsolicitud: '5da4f912dda04632e0cf90f1'
+  idsolicitud: ''
 };
 export default function(state = initialState, action) {
   switch (action.type) {
@@ -29,7 +29,7 @@ export default function(state = initialState, action) {
       return {
         ...state,
         solicitud: action.payload,
-        idsolicitud: action.idSolicitud
+        idsolicitud: action.idsolicitud
       }
     default:
       return state;

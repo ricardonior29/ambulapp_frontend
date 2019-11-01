@@ -40,7 +40,7 @@ export const enviarSolicitud = (userData, history) => dispatch => {
         dispatch({
           type: "GET_RESPONSE",
           payload: res.data,
-          idSolicitud: res.data_id
+          idsolicitud: res.data._id
         })
         //history.push("/countdown") // re-direct to login on successful register
       }) 

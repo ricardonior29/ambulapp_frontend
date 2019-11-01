@@ -3,10 +3,7 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import NavBar from "./Navbar"
 import FormSolicitud from "./FormSolicitud"
-//import Countdown from "./Countdown";
 import SeleccionCentroMedico from "./SeleccionCentroMedico";
-
-const host = 'https://ambulapp-main-server.herokuapp.com/api';
 
 class DashboardAmbulancia extends Component {
 
@@ -17,9 +14,7 @@ class DashboardAmbulancia extends Component {
       estadoSolicitud: false,
       latitud: 0,
       longitud: 0,
-      idSolicitud: '',
-      respuestas: '',
-      centros_medicos: []
+      idsolicitud: '',
     }
   }
 
@@ -28,7 +23,7 @@ class DashboardAmbulancia extends Component {
     if(nextProps.auth.solicitud)
     {
       this.setState({
-        idSolicitud: nextProps.auth.solicitud._id,
+        idsolicitud: nextProps.auth.idsolicitud
       });
     }
     if (nextProps.errors) {
@@ -44,35 +39,15 @@ class DashboardAmbulancia extends Component {
   };
   onSubmit = e => {
     e.preventDefault();
-    // ----- REDUX - REACT -----
-    //this.props.enviarSolicitud(newPeticion, this.props.history);
-    // -------------------------
   };
 
-  parentmethod(solicitudEnviada, lat, long) {
+  parentmethod(solicitudEnviada, lat, long, id) {
     this.setState({
       estadoSolicitud: solicitudEnviada,
       latitud: lat,
       longitud: long
     });
-
-    const solicitud = host + '/solicitudes/' + this.state.idSolicitud;
-        fetch(solicitud)
-            .then(response => response.json())
-            .then(data => {
-                this.setState({
-                  respuestas: data.centros_medicos
-                });
-            })
   }
-
-  /*componentDidUpdate(){
-    if(this.state.respuestas !== '')
-    {
-      
-    }
-    
-  }*/
 
   render() {
     const { user } = this.props.auth;
@@ -81,16 +56,13 @@ class DashboardAmbulancia extends Component {
         <div className="navbar-fixed" style={{ textAlign: "left" }}>
           <NavBar name = {user.placa}/>
         </div>
-          {this.state.estadoSolicitud? <SeleccionCentroMedico latitud = {this.state.latitud} longitud = {this.state.longitud} rtas ={this.state.respuestas}/> : <FormSolicitud methodfromparent = {this.parentmethod}/>}
-          
+          {this.state.estadoSolicitud? <SeleccionCentroMedico latitud = {this.state.latitud} longitud = {this.state.longitud} idsolicitud ={this.state.idsolicitud}/> : <FormSolicitud methodfromparent = {this.parentmethod}/>}
       </div>
     );
   }
 }
 
 DashboardAmbulancia.propTypes = {
-  //enviarSolicitud: PropTypes.func.isRequired,
-  //solicitudEnviada: PropTypes.bool,
   auth: PropTypes.object.isRequired,
   placa: PropTypes.string,
 };
