@@ -6,8 +6,12 @@ class Landing extends Component {
   render() {
     return (
       <div>
-      <br></br><br></br>  
-      <div className="row"><Header /></div>
+        <br></br>
+        <br></br>
+
+        <div className="row">
+          <Header />
+        </div>
         <div style={{ height: "55vh" }} className="container valign-wrapper">
           <div className="row">
             <div className="col s12 top-align">
@@ -47,7 +51,7 @@ class Landing extends Component {
                     >
                       Ambulancia
                     </Link>
-                  </div>                 
+                  </div>
                   <div className="row col s12 l6">
                     <Link
                       to="/centromedico/register"
@@ -66,6 +70,19 @@ class Landing extends Component {
             </div>
           </div>
         </div>
+        <footer class="footer">
+          <br></br>
+          <br></br> <br></br>
+          <br></br>
+          <br></br>
+          <div class="footer-copyright">
+            <div class="container">
+              <a href="https://ambulapp-main-server.herokuapp.com/api/docs">
+              <font color="grey">OpenApi Documentation</font>
+              </a>
+            </div>
+          </div>
+        </footer>
       </div>
     );
   }
