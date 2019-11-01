@@ -74,7 +74,7 @@ class Landing extends Component {
           <br></br>
           <br></br> <br></br>
           <br></br>
-          <br></br>
+          
           <div class="footer-copyright">
             <div class="container">
               <a href="https://ambulapp-main-server.herokuapp.com/api/docs">
