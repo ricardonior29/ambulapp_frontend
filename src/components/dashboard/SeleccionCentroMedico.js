@@ -10,7 +10,7 @@ const styleImg = {
 
 const host = 'https://ambulapp-main-server.herokuapp.com/api';
 
-const default_img = 'http://valmy.com/clubvalmy/wp-content/plugins/smg-theme-tools/public/images/not-available-es.png';
+const default_img = 'http://www.vista-urbana.com/storage/0_imagen-no-disponible_655532e0.gif';
 
 class CardCentroMedico extends Component {
     render() {

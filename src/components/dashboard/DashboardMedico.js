@@ -260,7 +260,7 @@ class Solicitudes extends Component {
                                                 <h6><b>Descripción de la emergencia</b></h6>
                                             </div>
                                             <div className="col s2.5"><h6><b>Edad del paciente</b></h6></div>
-                                            <div className="col s1.6"><h6><b>Confirmar disponibilidad</b></h6></div>
+                                            <div className="col s1.6"><h6><b>Confirmar recepción</b></h6></div>
                                         </div>
                                     </li>
                                     {listItems}
