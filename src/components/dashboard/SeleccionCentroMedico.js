@@ -19,7 +19,7 @@ class CardCentroMedico extends Component {
                 <br /><br />
                 <div className="card" style={styleImg}>
                     <div className="card-image waves-effect waves-block waves-light">
-                        <img className="activator" src={this.props.img.length > 0? this.props.img : default_img} alt="img centro medico" />
+                        <img className="activator" src={typeof this.props.img !== 'undefined'? this.props.img : default_img} alt="img centro medico" />
                     </div>
                     <div className="card-content">
                         <span className="card-title activator grey-text text-darken-4">
@@ -63,7 +63,7 @@ class SeleccionCentroMedico extends Component {
                 .then(data => {
                     var listaRtas = this.state.respuestas
                     console.log(listaRtas)
-                    if (listaRtas === undefined) {
+                    if (listaRtas.length === 0) {
                         console.log('no hay respuestas')
                         for (var k = 0; k < data.length; k++) {
                             var d = getDistance(data[k].latitud, data[k].longitud, this.props.latitud, this.props.longitud);
@@ -105,15 +105,18 @@ class SeleccionCentroMedico extends Component {
     }
 
     onTimeout(estado) {
-        this.setState({
+        /*this.setState({
             timeout: estado
         });
+        console.log(this.state.timeout)*/
 
         const solicitud = host + '/solicitudes/' + this.props.idsolicitud;
         fetch(solicitud)
             .then(response => response.json())
             .then(data => {
+                console.log(data)
                 this.setState({
+                  timeout: estado,
                   respuestas: data.centros_medicos
                 });
             })
