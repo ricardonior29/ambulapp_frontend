@@ -14,8 +14,6 @@ const default_img = 'http://valmy.com/clubvalmy/wp-content/plugins/smg-theme-too
 
 class CardCentroMedico extends Component {
     render() {
-         
-        
         return (
             <div>
                 <br /><br />

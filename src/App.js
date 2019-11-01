@@ -13,7 +13,7 @@ import RegisterAmbulancia from "./components/auth/RegisterAmbulancia";
 import RegisterMedico from "./components/auth/RegisterMedico";
 import Login from "./components/auth/Login";
 import DashboardAmbulancia from "./components/dashboard/DashboardAmbulancia";
-import DashboardMedico from "./components/docs/OpenApi";
+import DashboardMedico from "./components/dashboard/DashboardMedico";
 
 import { Provider } from "react-redux"; //used to manage state between components
 import store from "./store";
